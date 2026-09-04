@@ -17,13 +17,15 @@ export const metadata: Metadata = {
   description: "Animación de una flor dibujada con el ángulo áureo (137.5°)",
 };
 
+// Sin h-full / min-h-full: el shell del stepper mide h-dvh, y `html{height:100%}`
+// resuelve contra el viewport grande en mobile, lo que dejaría un scroll fantasma.
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="es"
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="overscroll-none">{children}</body>
     </html>
   );
 }

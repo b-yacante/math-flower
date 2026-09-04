@@ -7,8 +7,7 @@ const WORD_TRANSITION_MS = 450;
 
 // One entry per line of the message; blocks are separated by <br />.
 const BLOCKS = [
-  "Al darle mi propio significado, tambien aproveche para darle un toque matemático, y es que la flor que ves en pantalla esta generada con el numero áureo, el mismo que se encuentra en la naturaleza y que se asocia a la belleza y armonía. Belleza que encuentro en vos y armonia que siento cuando estoy a tu lado.",
-  "Espero que te guste y que la disfrutes tanto como yo disfruto de vos.",
+  "Quizás las flores amarillas se hicieron famosas por una canción y por una historia de amor, pero hoy quiero darle mi propio significado: son una forma de decirte que te elijo y que quiero compartir con vos todo lo lindo que pueda traer esta nueva primavera y que espero compartir muchas mas con vos.",
 ];
 
 const BLOCK_WORDS = BLOCKS.map((block) => block.split(" "));
@@ -43,7 +42,7 @@ function Word({ children, revealed, animate }: WordProps) {
   );
 }
 
-export function Message() {
+export function IntroMessage() {
   const { progress, prefersReducedMotion } = useReveal();
   // Same clock as the petals: the last word lands with the last petal.
   const revealedWords = Math.round(progress * TOTAL_WORDS);

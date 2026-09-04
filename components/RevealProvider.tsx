@@ -47,9 +47,22 @@ export function useReveal(): Reveal {
   return reveal;
 }
 
-export function RevealProvider({ children }: { children: ReactNode }) {
+interface RevealProviderProps {
+  children: ReactNode;
+  /** Arranca la animación al montar, sin esperar un click. */
+  autoPlay?: boolean;
+}
+
+export function RevealProvider({
+  children,
+  autoPlay = false,
+}: RevealProviderProps) {
   const [step, setStep] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+  // autoPlay solo define el valor inicial: el paso que monta este provider se
+  // desmonta al cambiar de paso, así que arranca de nuevo por remontaje y no
+  // hace falta un effect que dispare play() (que además sería setState síncrono
+  // dentro de un effect).
+  const [isPlaying, setIsPlaying] = useState(autoPlay);
   const prefersReducedMotion = useSyncExternalStore(
     subscribeToReducedMotion,
     getReducedMotionSnapshot,
@@ -58,21 +71,22 @@ export function RevealProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isPlaying || step >= REVEAL_STEPS) return;
-    const t = setTimeout(() => {
-      setStep((s) => s + 1);
-    }, REVEAL_INTERVAL_MS);
+    // La media query se lee acá, en cada tick, y no desde el state: durante la
+    // hidratación useSyncExternalStore todavía devuelve el snapshot del server
+    // (false), justo cuando arranca el autoPlay. Con reduced motion saltamos al
+    // final en el primer tick, sin ráfaga de pétalos.
+    const reduced = window.matchMedia(REDUCED_MOTION_QUERY).matches;
+    const t = setTimeout(
+      () => setStep((s) => (reduced ? REVEAL_STEPS : s + 1)),
+      reduced ? 0 : REVEAL_INTERVAL_MS,
+    );
     return () => clearTimeout(t);
   }, [isPlaying, step]);
 
   const play = useCallback(() => {
-    if (prefersReducedMotion) {
-      setIsPlaying(false);
-      setStep(REVEAL_STEPS);
-      return;
-    }
     setStep(0);
     setIsPlaying(true);
-  }, [prefersReducedMotion]);
+  }, []);
 
   const value = useMemo(
     () => ({

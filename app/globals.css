@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* La app es light-only: el stepper pinta su propio degradado hueso encima. */
+  color-scheme: light;
+  --background: #faf7f0;
+  --foreground: #1c1917;
 }
 
 @theme inline {
@@ -12,15 +14,31 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Animación de entrada de cada paso. El <div key={index}> de Stepper se
+   remonta al cambiar de paso, así que la animación se reinicia sola. */
+@utility step-in {
+  animation: step-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-in {
+    animation: none;
+  }
+}
+
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }

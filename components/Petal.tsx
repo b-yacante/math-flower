@@ -8,7 +8,9 @@ interface PetalProps {
   angleDeg: number;
   length: number;
   width: number;
-  color: string;
+  fill: string;
+  /** Contorno del pétalo: lo despega del fondo sin apagar el relleno. */
+  stroke: string;
   animate: boolean;
   transitionMs?: number;
 }
@@ -25,7 +27,8 @@ export function Petal({
   angleDeg,
   length,
   width,
-  color,
+  fill,
+  stroke,
   animate,
   transitionMs = 450,
 }: PetalProps) {
@@ -41,10 +44,10 @@ export function Petal({
     <g transform={`translate(${x} ${y}) rotate(${angleDeg})`}>
       <path
         d={petalPathD(length, width)}
-        fill={color}
-        stroke={color}
-        strokeOpacity={0.6}
-        strokeWidth={0.4}
+        fill={fill}
+        stroke={stroke}
+        strokeOpacity={0.75}
+        strokeWidth={0.5}
         style={{
           transformOrigin: "center",
           transformBox: "fill-box",

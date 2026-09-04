@@ -24,9 +24,24 @@ export function getPetalPosition(n: number, scale: number): PetalPosition {
   };
 }
 
-// Warm floral hue sweep: magenta -> red -> orange -> yellow
-export function getPetalColor(n: number, total: number): string {
+export interface PetalColor {
+  fill: string;
+  stroke: string;
+}
+
+/**
+ * Barrido de tono corto (42° -> 52°): la flor lee como un solo amarillo dorado,
+ * no como un degradado naranja -> amarillo.
+ *
+ * El amarillo puro casi no contrasta contra el fondo hueso, así que el relleno
+ * se deja saturado y cada pétalo se recorta con su mismo tono en oscuro. Bajar
+ * la luminosidad del relleno lo haría resaltar, pero a costa de volverlo mostaza.
+ */
+export function getPetalColor(n: number, total: number): PetalColor {
   const t = n / Math.max(total - 1, 1);
-  const hue = (380 + t * 40) % 360;
-  return `hsl(${hue.toFixed(1)} 70% 55%)`;
+  const hue = (42 + t * 10).toFixed(1);
+  return {
+    fill: `hsl(${hue} 100% 52%)`,
+    stroke: `hsl(${hue} 85% 33%)`,
+  };
 }

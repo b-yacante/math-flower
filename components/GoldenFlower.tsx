@@ -15,10 +15,11 @@ const MAX_RADIUS = SCALE * Math.sqrt(PETAL_COUNT - 1);
 const VIEW_R = MAX_RADIUS + PETAL_LENGTH / 2 + 6;
 
 export function GoldenFlower() {
-  const { step, prefersReducedMotion, play } = useReveal();
+  const { step, prefersReducedMotion } = useReveal();
 
   const petals = Array.from({ length: step }, (_, n) => {
     const { x, y, angleDeg } = getPetalPosition(n, SCALE);
+    const { fill, stroke } = getPetalColor(n, PETAL_COUNT);
     return (
       <Petal
         key={n}
@@ -27,37 +28,38 @@ export function GoldenFlower() {
         angleDeg={angleDeg}
         length={PETAL_LENGTH}
         width={PETAL_WIDTH}
-        color={getPetalColor(n, PETAL_COUNT)}
+        fill={fill}
+        stroke={stroke}
         animate={!prefersReducedMotion}
       />
     );
   });
 
+  // Sin tamaño propio: llena la caja que le da el slot visual del paso y el
+  // viewBox se encarga de mantener el dibujo cuadrado y centrado adentro.
   return (
-    <div className="flex flex-col items-center gap-8">
-      <svg
-        viewBox={`${-VIEW_R} ${-VIEW_R} ${VIEW_R * 2} ${VIEW_R * 2}`}
-        className="h-[min(80vh,80vw)] w-[min(80vh,80vw)]"
-        role="img"
-        aria-label="Flor generada con el ángulo áureo"
-      >
-        <defs>
-          <radialGradient id="centerGradient">
-            <stop offset="0%" stopColor="#f59e0b" />
-            <stop offset="100%" stopColor="#92400e" />
-          </radialGradient>
-        </defs>
-        {petals}
-        <circle r={CENTER_RADIUS} fill="url(#centerGradient)" />
-      </svg>
-
-      <button
-        type="button"
-        onClick={play}
-        className="rounded-full bg-amber-400 px-8 py-3 text-sm font-semibold text-zinc-900 shadow-lg shadow-amber-950/40 transition-colors hover:bg-amber-300 active:bg-amber-500"
-      >
-        Play
-      </button>
-    </div>
+    <svg
+      viewBox={`${-VIEW_R} ${-VIEW_R} ${VIEW_R * 2} ${VIEW_R * 2}`}
+      className="h-full w-full"
+      role="img"
+      aria-label="Flor generada con el ángulo áureo"
+    >
+      <defs>
+        {/* Recorrido corto dentro del mismo amarillo: solo da volumen al centro,
+            sin caer en el marrón que cortaba la flor en dos colores. */}
+        <radialGradient id="centerGradient">
+          <stop offset="0%" stopColor="#ffd54a" />
+          <stop offset="100%" stopColor="#e0a007" />
+        </radialGradient>
+      </defs>
+      {petals}
+      <circle
+        r={CENTER_RADIUS}
+        fill="url(#centerGradient)"
+        stroke="hsl(46 85% 33%)"
+        strokeOpacity={0.75}
+        strokeWidth={0.5}
+      />
+    </svg>
   );
 }
